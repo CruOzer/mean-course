@@ -17,4 +17,12 @@ router.get('/', (req, res, next) => {
   });
 });
 
+
+router.post('/', (req, res, next) => {
+  const post = req.body;
+  console.log(post);
+  res.status(201).json({
+    message: 'Post added succesfully'
+  });
+});
 module.exports = router;

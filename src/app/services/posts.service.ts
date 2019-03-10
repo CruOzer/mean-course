@@ -17,12 +17,12 @@ export class PostsService {
     return [...this.posts];
   }
 
-  getPostUpdateListener(): Observable<Post[]>{
+  getPostUpdateListener(): Observable<Post[]> {
     return this.postsUpdated.asObservable();
   }
 
   addPost(title: string, content: string) {
-    const post: Post = { title: title, content: content };
+    const post: Post = { id: '', title: title, content: content };
     this.posts.unshift(post);
     this.postsUpdated.next([...this.posts]);
   }

@@ -1,9 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+// Load models
+require('./models/Post');
 
+// Load Routes
 const posts = require('./routes/posts');
 
 const app = express();
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true
+  })
+  .then(() => {
+    console.log('MongoDB connected...');
+  })
+  .catch((err) => {
+    console.log('MongoDB connection failure: ' + err);
+  });
+
 
 // Allow CORS
 app.use((req, res, next) => {

@@ -1,9 +1,9 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { Post } from '../../../models/Post';
 import { PostsService } from '../../../services/posts.service';
-
 
 @Component({
   selector: 'app-post-create',
@@ -11,24 +11,61 @@ import { PostsService } from '../../../services/posts.service';
   styleUrls: ['./post-create.component.scss']
 })
 export class PostCreateComponent implements OnInit {
-  enteredContent: string = '';
-  enteredTitle: string = '';
+  private editMode: Boolean;
+  private postId: string;
+  post: Post;
+  // enteredContent: string = '';
+  // enteredTitle: string = '';
   // @Output()
   // postCreated: EventEmitter<Post> = new EventEmitter();
 
-  constructor(private postsService: PostsService) {}
+  constructor(
+    private postsService: PostsService,
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      this.editMode = paramMap.has('postId');
+      if (this.editMode) {
+        this.postId = paramMap.get('postId');
+        this.postsService.getPost(this.postId).subscribe(postData => {
+          console.log(postData);
 
-  onAddPost(form: NgForm) {
+          this.post = {
+            id: postData.post._id,
+            title: postData.post.title,
+            content: postData.post.content
+          };
+        });
+      } else {
+        this.postId = null;
+        this.post = null;
+      }
+    });
+  }
+
+  onSavePost(form: NgForm) {
     if (form.invalid) {
       return;
     }
-    const post: Post = {
-      id: '',
-      title: form.value.title,
-      content: form.value.content
-    };
+
+    if (this.editMode) {
+      this.editPost(form);
+    } else {
+      this.addPost(form);
+    }
+  }
+
+  editPost(form: NgForm) {
+    this.postsService.updatePost(
+      this.postId,
+      form.value.title,
+      form.value.content
+    );
+  }
+
+  addPost(form: NgForm) {
     this.postsService.addPost(form.value.title, form.value.content);
     // this.postCreated.emit(post);
   }

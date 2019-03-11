@@ -2,6 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatInputModule,
@@ -11,8 +14,6 @@ import {
   MatExpansionModule
 } from '@angular/material';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { PostCreateComponent } from './components/posts/post-create/post-create.component';
 import { HeaderComponent } from './components/header/header.component';
 import { PostListComponent } from './components/posts/post-list/post-list.component';

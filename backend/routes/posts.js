@@ -15,6 +15,24 @@ router.get('/', (req, res, next) => {
     .catch(err => console.log(err));
 });
 
+// Get one post
+router.get('/:id', (req, res, next) => {
+  Post.findById(req.params.id)
+    .then(post => {
+      if (post) {
+        res.status(200).json({
+          message: 'Get successfully!',
+          post: post
+        });
+      } else {
+        res.status(404).json({
+          message: "Post not found"
+        });
+      }
+    })
+    .catch(err => console.log(err));
+});
+
 // Add a post
 router.post('/', (req, res, next) => {
   const post = new Post({
@@ -23,15 +41,16 @@ router.post('/', (req, res, next) => {
   });
   post.save()
     .then(p => {
-      console.log('Inside Save');
       res.status(201).json({
         message: 'Post added successfully',
-        post: p
+        postId: p._id
       });
     })
     .catch((err) => console.log(err));
 });
 
+
+// Delete post
 router.delete('/:id', (req, res) => {
   Post.deleteOne({
       _id: req.params.id
@@ -39,6 +58,24 @@ router.delete('/:id', (req, res) => {
     .then(() => {
       res.status(200).json({
         message: 'Post deleted successfully'
+      });
+    })
+    .catch(err => console.log(err));
+});
+
+// Update post
+router.put('/:id', (req, res) => {
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+    _id: req.body.id
+  });
+  Post.updateOne({
+      _id: req.params.id
+    }, post)
+    .then(result => {
+      res.status(200).json({
+        message: 'Post updated successfully'
       });
     })
     .catch(err => console.log(err));

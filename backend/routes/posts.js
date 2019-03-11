@@ -2,6 +2,27 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Post = mongoose.model('posts');
+const multer = require('multer');
+
+// Allow just these file types
+const MIME_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpg': 'jpg',
+  'image/jpeg': 'jpg'
+}
+// Where to store the images and how the images are named
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = isValid ? null : new Error('Invalid mime type');
+    cb(error, 'backend/images');
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(' ').join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
 
 // Get all posts
 router.get('/', (req, res, next) => {
@@ -34,16 +55,24 @@ router.get('/:id', (req, res, next) => {
 });
 
 // Add a post
-router.post('/', (req, res, next) => {
+router.post('/', multer({
+  storage: storage
+}).single('image'), (req, res, next) => {
+  const url = req.protocol + '://' + req.get('host');
   const post = new Post({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: url + '/images/' + req.file.filename
   });
+  console.log(post);
   post.save()
     .then(p => {
       res.status(201).json({
         message: 'Post added successfully',
-        postId: p._id
+        post: {
+          ...p,
+          id: p._id
+        }
       });
     })
     .catch((err) => console.log(err));
@@ -64,11 +93,19 @@ router.delete('/:id', (req, res) => {
 });
 
 // Update post
-router.put('/:id', (req, res) => {
+router.put('/:id', multer({
+  storage: storage
+}).single('image'), (req, res) => {
+  let imagePath = req.body.imagePath;
+  if (req.file) {
+    const url = req.protocol + '://' + req.get('host');
+    imagePath = url + '/images/' + req.file.filename;
+  }
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
-    _id: req.body.id
+    imagePath: imagePath,
+    _id: req.params.id
   });
   Post.updateOne({
       _id: req.params.id

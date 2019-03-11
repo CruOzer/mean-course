@@ -6,15 +6,18 @@
         {{post.title}}
       </mat-panel-title>
     </mat-expansion-panel-header>
+    <div class="post-image">
+      <img [src]="post.imagePath" [alt]="post.title">
+    </div>
     <p>{{post.content}}</p>
     <mat-action-row>
-        <a [routerLink]="['/edit', post.id]" mat-button ccolor="accent">EDIT</a>
-        <button mat-button color="warn" routerLinkActive="router-link-active"  (click)="onDelete(post.id)">DELETE</button>
-      </mat-action-row>
+      <a [routerLink]="['/edit', post.id]" mat-button ccolor="accent">EDIT</a>
+      <button mat-button color="warn" routerLinkActive="router-link-active" (click)="onDelete(post.id)">DELETE</button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
 <ng-template #noPostTemplate *ngIf="!isLoading">
-<p class="mat-body-1 info-text">
-  No posts added yet!
-</p>
+  <p class="mat-body-1 info-text">
+    No posts added yet!
+  </p>
 </ng-template>

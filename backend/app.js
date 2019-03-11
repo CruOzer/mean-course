@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 // Load models
 require('./models/Post');
 
@@ -34,6 +35,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+
+app.use('/images', express.static(path.join('backend/images')));
 
 app.get('/', (req, res) => {
   res.send('Hello from express');

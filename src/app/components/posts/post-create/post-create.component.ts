@@ -14,6 +14,7 @@ export class PostCreateComponent implements OnInit {
   private editMode: Boolean;
   private postId: string;
   post: Post;
+  isLoading: Boolean = true;
   // enteredContent: string = '';
   // enteredTitle: string = '';
   // @Output()
@@ -26,17 +27,17 @@ export class PostCreateComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      this.isLoading = true;
       this.editMode = paramMap.has('postId');
       if (this.editMode) {
         this.postId = paramMap.get('postId');
         this.postsService.getPost(this.postId).subscribe(postData => {
-          console.log(postData);
-
           this.post = {
             id: postData.post._id,
             title: postData.post.title,
             content: postData.post.content
           };
+          this.isLoading = false;
         });
       } else {
         this.postId = null;
@@ -49,7 +50,7 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
-
+    this.isLoading = true;
     if (this.editMode) {
       this.editPost(form);
     } else {

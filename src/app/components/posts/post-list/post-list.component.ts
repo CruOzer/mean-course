@@ -11,6 +11,7 @@ import { PostsService } from '../../../services/posts.service';
 export class PostListComponent implements OnInit, OnDestroy {
   panelOpenState = false;
   private postsSub: Subscription;
+  isLoading: Boolean = true;
   // posts = [
   //   { title: 'Title One', content: 'Content1' },
   //   { title: 'Title Two', content: 'Content2' },
@@ -26,11 +27,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.postsService.getPosts();
     this.postsSub = this.postsService
       .getPostUpdateListener()
       .subscribe((data: Post[]) => {
         this.posts = data;
+        this.isLoading = false;
       });
   }
   ngOnDestroy() {

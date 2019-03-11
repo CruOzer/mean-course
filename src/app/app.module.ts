@@ -12,7 +12,8 @@ import {
   MatButtonModule,
   MatToolbarModule,
   MatExpansionModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { PostCreateComponent } from './components/posts/post-create/post-create.component';
@@ -34,7 +35,8 @@ import { PostListComponent } from './components/posts/post-list/post-list.compon
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

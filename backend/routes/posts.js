@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Post = mongoose.model('posts');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 // Allow just these file types
 const MIME_TYPE_MAP = {
@@ -36,8 +37,8 @@ router.get('/', (req, res, next) => {
       .limit(pageSize);
   }
   postQuery.then(documents => {
-    fetchedPosts = documents;
-    return Post.count();
+      fetchedPosts = documents;
+      return Post.count();
 
     }).then(count => {
       res.status(200).json({
@@ -68,7 +69,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 // Add a post
-router.post('/', multer({
+router.post('/', checkAuth, multer({
   storage: storage
 }).single('image'), (req, res, next) => {
   const url = req.protocol + '://' + req.get('host');
@@ -93,7 +94,7 @@ router.post('/', multer({
 
 
 // Delete post
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkAuth, (req, res) => {
   Post.deleteOne({
       _id: req.params.id
     })
@@ -106,7 +107,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // Update post
-router.put('/:id', multer({
+router.put('/:id', checkAuth, multer({
   storage: storage
 }).single('image'), (req, res) => {
   let imagePath = req.body.imagePath;

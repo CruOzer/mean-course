@@ -47,8 +47,6 @@ export class PostsService {
       )
       .subscribe(
         (data: { posts: Post[]; maxPosts: number; message: string }) => {
-          console.log(data);
-
           this.posts = data.posts;
           this.postsUpdated.next({
             posts: [...this.posts],

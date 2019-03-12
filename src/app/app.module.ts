@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,8 +21,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { PostListComponent } from './components/posts/post-list/post-list.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
+import { AuthInterceptor } from './services/auth-interceptor';
 
-// import { PostsService } from './services/posts.service';
 
 @NgModule({
   declarations: [AppComponent, PostCreateComponent, HeaderComponent, PostListComponent, LoginComponent, SignupComponent],
@@ -41,7 +41,7 @@ import { SignupComponent } from './components/auth/signup/signup.component';
     MatProgressSpinnerModule,
     MatPaginatorModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

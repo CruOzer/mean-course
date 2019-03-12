@@ -84,7 +84,8 @@ export class PostsService {
         id,
         title,
         content,
-        imagePath: image
+        imagePath: image,
+        creator: null
       };
     }
 
@@ -102,11 +103,11 @@ export class PostsService {
     id: string
   ): Observable<{
     message: string;
-    post: { _id: string; title: string; content: string; imagePath: string };
+    post:  { _id: string; title: string; content: string; imagePath: string, creator: string };
   }> {
     return this.httpClient.get<{
       message: string;
-      post: { _id: string; title: string; content: string; imagePath: string };
+      post: { _id: string; title: string; content: string; imagePath: string, creator: string };
     }>('http://localhost:5000/api/posts/' + id);
   }
 }

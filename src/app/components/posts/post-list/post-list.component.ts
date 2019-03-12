@@ -1,19 +1,20 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Post } from '../../../models/Post';
-import { PostsService } from '../../../services/posts.service';
-import { PageEvent } from '@angular/material';
-import { AuthService } from 'src/app/services/auth.service';
+import { Component, OnInit, Input, OnDestroy } from "@angular/core";
+import { Subscription } from "rxjs";
+import { Post } from "../../../models/Post";
+import { PostsService } from "../../../services/posts.service";
+import { PageEvent } from "@angular/material";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
-  selector: 'app-post-list',
-  templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.scss']
+  selector: "app-post-list",
+  templateUrl: "./post-list.component.html",
+  styleUrls: ["./post-list.component.scss"]
 })
 export class PostListComponent implements OnInit, OnDestroy {
   panelOpenState = false;
   private postsSub: Subscription;
-  isLoading: Boolean = true;
+  isLoading: boolean = true;
+  userId: string;
   userIsAuthenticated: boolean = false;
   private authListenerSubs: Subscription;
   // posts = [
@@ -49,6 +50,7 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.userId = this.authService.getUserId();
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSub = this.postsService
@@ -60,7 +62,10 @@ export class PostListComponent implements OnInit, OnDestroy {
       });
     this.authListenerSubs = this.authService
       .getAuthStatusListener()
-      .subscribe(isAuthenticaed => (this.userIsAuthenticated = isAuthenticaed));
+      .subscribe(isAuthenticaed => {
+        this.userIsAuthenticated = isAuthenticaed;
+        this.userId = this.authService.getUserId();
+      });
   }
   ngOnDestroy() {
     this.postsSub.unsubscribe();

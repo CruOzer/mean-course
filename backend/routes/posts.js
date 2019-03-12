@@ -127,7 +127,8 @@ router.put('/:id', checkAuth, multer({
     title: req.body.title,
     content: req.body.content,
     imagePath: imagePath,
-    _id: req.params.id
+    _id: req.params.id,
+    creator: req.userData.id
   });
   Post.updateOne({
       _id: req.params.id,

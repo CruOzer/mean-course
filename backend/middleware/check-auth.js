@@ -7,7 +7,11 @@ module.exports = (req, res, next) => {
     // split because of Berear UIFNUIDN
     const token = req.headers.authorization.split(" ")[1];
     // Verify token
-    jwt.verify(token, process.env.PRIVATE_TOKEN) // can throw error
+    const decodedToken = jwt.verify(token, process.env.PRIVATE_TOKEN) // can throw error
+    req.userData = {
+      email: decodedToken,
+      id: decodedToken.userId
+    };
     next();
   } catch (error) {
     res.status(401).json({

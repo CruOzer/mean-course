@@ -76,13 +76,14 @@ router.post('/', checkAuth, multer({
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
-    imagePath: url + '/images/' + req.file.filename
+    imagePath: url + '/images/' + req.file.filename,
+    creator: req.userData.id
   });
   console.log(post);
   post.save()
     .then(p => {
       res.status(201).json({
-        message: 'Post added successfully',
+        message: 'Post added successfully.',
         post: {
           ...p,
           id: p._id
@@ -96,12 +97,19 @@ router.post('/', checkAuth, multer({
 // Delete post
 router.delete('/:id', checkAuth, (req, res) => {
   Post.deleteOne({
-      _id: req.params.id
+      _id: req.params.id,
+      creator: req.userData.id
     })
-    .then(() => {
-      res.status(200).json({
-        message: 'Post deleted successfully'
-      });
+    .then((result) => {
+      if (result.n > 0) {
+        res.status(200).json({
+          message: 'Post deleted successfully.'
+        });
+      } else {
+        res.status(401).json({
+          message: 'Not authorized.'
+        });
+      }
     })
     .catch(err => console.log(err));
 });
@@ -122,12 +130,19 @@ router.put('/:id', checkAuth, multer({
     _id: req.params.id
   });
   Post.updateOne({
-      _id: req.params.id
+      _id: req.params.id,
+      creator: req.userData.id
     }, post)
     .then(result => {
-      res.status(200).json({
-        message: 'Post updated successfully'
-      });
+      if (result.nModified > 0) {
+        res.status(200).json({
+          message: 'Post updated successfully.'
+        });
+      } else {
+        res.status(401).json({
+          message: 'Not authorized.'
+        });
+      }
     })
     .catch(err => console.log(err));
 });

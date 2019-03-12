@@ -1,14 +1,14 @@
-import { Component, OnInit, Input, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs";
-import { Post } from "../../../models/Post";
-import { PostsService } from "../../../services/posts.service";
-import { PageEvent } from "@angular/material";
-import { AuthService } from "src/app/services/auth.service";
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Post } from '../Post';
+import { PostsService } from '../posts.service';
+import { PageEvent } from '@angular/material';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
-  selector: "app-post-list",
-  templateUrl: "./post-list.component.html",
-  styleUrls: ["./post-list.component.scss"]
+  selector: 'app-post-list',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.scss']
 })
 export class PostListComponent implements OnInit, OnDestroy {
   panelOpenState = false;
@@ -38,7 +38,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.postsService.deletePost(postId).subscribe(data => {
       this.postsService.getPosts(this.postsPerPage, this.currentPage);
-    });
+    }, err => this.isLoading = false);
   }
 
   onChangePage(event: PageEvent) {

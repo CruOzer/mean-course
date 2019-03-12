@@ -4,9 +4,11 @@ const mongoose = require('mongoose');
 const path = require('path');
 // Load models
 require('./models/Post');
+require('./models/User');
 
 // Load Routes
 const posts = require('./routes/posts');
+const user = require('./routes/user');
 
 const app = express();
 
@@ -44,6 +46,6 @@ app.get('/', (req, res) => {
 
 
 app.use('/api/posts', posts);
-
+app.use('/api/user', user);
 
 module.exports = app;

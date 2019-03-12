@@ -7,40 +7,53 @@ import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL: string = environment.apiUrl + '/posts';
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
   private posts: Post[] = [];
 
-  private postsUpdated: Subject<{posts: Post[], postCount: number}> = new Subject<{posts: Post[], postCount: number}>();
+  private postsUpdated: Subject<{
+    posts: Post[];
+    postCount: number;
+  }> = new Subject<{ posts: Post[]; postCount: number }>();
   constructor(private httpClient: HttpClient, private router: Router) {}
 
   getPosts(postPerPage: number, currentPage: number) {
     const queryParam: string = `?pagesize=${postPerPage}&page=${currentPage}`;
     this.httpClient
-      .get<{ message: string; posts: any, maxPosts: number }>(
-        'http://localhost:5000/api/posts' + queryParam
+      .get<{ message: string; posts: any; maxPosts: number }>(
+        BACKEND_URL + queryParam
       )
       .pipe(
         map(postData => {
-          return {posts: postData.posts.map(post => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-              imagePath: post.imagePath,
-              creator: post.creator
-            };
-          }), maxPosts: postData.maxPosts, message: postData.message};
+          return {
+            posts: postData.posts.map(post => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath,
+                creator: post.creator
+              };
+            }),
+            maxPosts: postData.maxPosts,
+            message: postData.message
+          };
         })
       )
       .subscribe(
-        (data: {posts: Post[], maxPosts: number, message:string} )=> {
+        (data: { posts: Post[]; maxPosts: number; message: string }) => {
           console.log(data);
 
           this.posts = data.posts;
-          this.postsUpdated.next({posts:[...this.posts], postCount: data.maxPosts});
+          this.postsUpdated.next({
+            posts: [...this.posts],
+            postCount: data.maxPosts
+          });
         },
         err => {
           console.log(err);
@@ -48,7 +61,7 @@ export class PostsService {
       );
   }
 
-  getPostUpdateListener(): Observable<{posts: Post[], postCount: number}> {
+  getPostUpdateListener(): Observable<{ posts: Post[]; postCount: number }> {
     return this.postsUpdated.asObservable();
   }
 
@@ -58,18 +71,14 @@ export class PostsService {
     postData.append('content', content);
     postData.append('image', image, title);
     this.httpClient
-      .post<{ message: string; post: Post }>(
-        'http://localhost:5000/api/posts',
-        postData
-      )
+      .post<{ message: string; post: Post }>(BACKEND_URL, postData)
       .subscribe(data => {
         this.router.navigate(['/']);
       });
   }
 
   deletePost(id: string) {
-    return this.httpClient
-      .delete<{ message: string }>('http://localhost:5000/api/posts/' + id);
+    return this.httpClient.delete<{ message: string }>(BACKEND_URL + '/' + id);
   }
 
   updatePost(id: string, title: string, content: string, image: File | string) {
@@ -90,10 +99,7 @@ export class PostsService {
     }
 
     this.httpClient
-      .put<{ message: string }>(
-        'http://localhost:5000/api/posts/' + id,
-        postData
-      )
+      .put<{ message: string }>(BACKEND_URL + '/' + id, postData)
       .subscribe(data => {
         this.router.navigate(['/']);
       });
@@ -103,11 +109,23 @@ export class PostsService {
     id: string
   ): Observable<{
     message: string;
-    post:  { _id: string; title: string; content: string; imagePath: string, creator: string };
+    post: {
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+      creator: string;
+    };
   }> {
     return this.httpClient.get<{
       message: string;
-      post: { _id: string; title: string; content: string; imagePath: string, creator: string };
-    }>('http://localhost:5000/api/posts/' + id);
+      post: {
+        _id: string;
+        title: string;
+        content: string;
+        imagePath: string;
+        creator: string;
+      };
+    }>(BACKEND_URL + '/' + id);
   }
 }

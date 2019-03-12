@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Allow CORS
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin',  process.env.CORS_URL);
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_URL);
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
@@ -38,13 +38,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/images', express.static(path.join('backend/images')));
-
-app.get('/', (req, res) => {
-  res.send('Hello from express');
-});
-
+app.use('/', express.static(path.join(__dirname, 'angular')));
 
 app.use('/api/posts', posts);
 app.use('/api/user', user);
-
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, 'angular', 'index.html'));
+})
 module.exports = app;
